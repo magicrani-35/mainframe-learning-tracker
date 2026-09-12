@@ -1,7 +1,8 @@
 package com.barbarawilliams.rest;
 
 import java.util.List;
-import java.util.Map;
+
+import com.barbarawilliams.model.Challenge;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -13,14 +14,10 @@ import jakarta.ws.rs.core.MediaType;
 public class ChallengeResource {
 
         @GET
-        public List<Map<String, String>>
-    getChallenges() {
+        public List<Challenge> getChallenges() {
             return List.of(
-                    Map.of(
-                            "code", "JAVA1",
-                            "category", "JAVA",
-                            "status", "in progress"
-                    )
+                    new Challenge("JAVA1", "JAVA", "completed"),
+                    new Challenge("ASM2", "ASSEMBLER", "completed")
             );
         }
 }
