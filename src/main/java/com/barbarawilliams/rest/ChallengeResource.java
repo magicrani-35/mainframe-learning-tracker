@@ -2,10 +2,12 @@ package com.barbarawilliams.rest;
 
 import java.net.URI;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.barbarawilliams.model.Challenge;
+import com.barbarawilliams.repository.ChallengeRepository;
 
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -20,44 +22,35 @@ import jakarta.ws.rs.core.UriInfo;
 
 @Path("/challenges")
 @Produces(MediaType.APPLICATION_JSON)
+@RequestScoped
 public class ChallengeResource {
 
-    private static final List<Challenge>
-            challenges =
-            new CopyOnWriteArrayList<>
-                    (List.of(
-                            new Challenge(
-                                    "JAVA1",
-                                    "JAVA",
-                                    "completed"
-                            ),
-                            new Challenge(
-                                    "ASM2",
-                                    "ASSEMBLER",
-                                    "completed"
-                            )
-                    ));
+    @Inject
+    ChallengeRepository repository;
+
+    public ChallengeResource() {
+
+    }
+
+    ChallengeResource(ChallengeRepository repository) {
+        this.repository = repository;
+    }
 
     @GET
     public List<Challenge> getChallenges() {
-        return challenges;
+        return repository.findAll();
     }
 
     @GET
     @Path("/{code}")
     public Challenge getChallenge(
-            @PathParam("code") String code
-    ) {
-        return challenges.stream()
-                .filter(challenge ->
-                        challenge.code().equalsIgnoreCase(code))
-                .findFirst()
-                .orElseThrow(() ->
-                        new WebApplicationException(
-                                "Challenge not found: " + code,
-                                Response.Status.NOT_FOUND
-                        )
-                );
+            @PathParam("code")
+    String code) {
+        return repository.findByCode(code)
+                .orElseThrow(() -> new WebApplicationException(
+                        "Challenge not found: " + code,
+                        Response.Status.NOT_FOUND));
+
     }
 
     @POST
@@ -65,10 +58,9 @@ public class ChallengeResource {
     public Response createChallenge(
             Challenge challenge,
             @Context UriInfo uriInfo) {
-
         if (challenge == null
-                || challenge.code() == null
-                || challenge.code().isBlank()) {
+            || challenge.code() == null
+            || challenge.code().isBlank()) {
 
             throw new WebApplicationException(
                     "Challenge code is required",
@@ -76,13 +68,7 @@ public class ChallengeResource {
             );
         }
 
-        boolean codeAlreadyExists = challenges.stream()
-                .anyMatch(existing ->
-                        existing.code().equalsIgnoreCase(challenge.code()
-                        )
-                );
-
-        if (codeAlreadyExists) {
+        if (repository.codeExists(challenge.code())) {
             throw new WebApplicationException(
                     "Challenge already exists: "
                     + challenge.code(),
@@ -90,7 +76,7 @@ public class ChallengeResource {
             );
         }
 
-        challenges.add(challenge);
+        repository.add(challenge);
 
         URI challengeUri = uriInfo
                 .getAbsolutePathBuilder()

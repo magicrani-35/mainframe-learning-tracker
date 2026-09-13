@@ -1,5 +1,6 @@
 package com.barbarawilliams.rest;
 
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 
+import com.barbarawilliams.repository.ChallengeRepository;
 import org.junit.jupiter.api.Test;
 
 import com.barbarawilliams.model.Challenge;
@@ -19,8 +21,15 @@ import jakarta.ws.rs.core.UriInfo;
 
 class ChallengeResourceTest {
 
-    private final ChallengeResource resource =
-            new ChallengeResource();
+    private ChallengeResource resource;
+
+    @BeforeEach
+    void setUp() {
+        ChallengeRepository repository =
+                new ChallengeRepository();
+
+        resource = new ChallengeResource(repository);
+    }
 
     @Test
     void returnsAllChallenges() {
@@ -75,29 +84,21 @@ class ChallengeResourceTest {
                         "completed"
                 );
 
-        try {
-            Response response =
-                    resource.createChallenge(challenge, uriInfo);
+        Response response =
+                resource.createChallenge(challenge, uriInfo);
+        assertEquals(
+                Response.Status.CREATED.getStatusCode(),
+                response.getStatus()
+        );
 
-            assertEquals(
-                    Response.Status.CREATED.getStatusCode(),
-                    response.getStatus()
-            );
+        assertEquals(challenge, response.getEntity());
 
-            assertEquals(challenge, response.getEntity());
-
-            assertEquals(
-                    URI.create(
-                            "http://localhost/api/challenges/USS2-TEST"
-                    ),
-                    response.getLocation()
-            );
-        } finally {
-            resource.getChallenges().removeIf(
-                    existing ->
-                                existing.code().equals("USS2-TEST")
-            );
-        }
+        assertEquals(
+                URI.create(
+                        "http://localhost/api/challenges/USS2-TEST"
+                ),
+                response.getLocation()
+        );
     }
 
     @Test
