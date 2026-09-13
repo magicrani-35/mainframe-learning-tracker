@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.time.LocalDate;
 
 import com.barbarawilliams.repository.ChallengeRepository;
 import org.junit.jupiter.api.Test;
@@ -80,8 +81,13 @@ class ChallengeResourceTest {
         Challenge challenge =
                 new Challenge(
                         "USS2-TEST",
+                        "USS Part 2",
                         "USS",
-                        "completed"
+                        "IBM Z Xplore",
+                        "completed",
+                        LocalDate.of(2026, 9, 8),
+                        LocalDate.of(2026, 9, 8),
+                        "Practiced shell scripting"
                 );
 
         Response response =
@@ -106,8 +112,13 @@ class ChallengeResourceTest {
         Challenge challenge =
                 new Challenge(
                         " ",
+                        "Test Challenge",
                         "USS",
-                        "in progress"
+                        "IBM Z Xplore",
+                        "in progress",
+                        null,
+                        null,
+                        null
                 );
 
         WebApplicationException exception =
@@ -130,8 +141,13 @@ class ChallengeResourceTest {
         Challenge duplicate =
                 new Challenge(
                         "java1",
+                        "Duplicate Java Challenge",
                         "JAVA",
-                        "completed"
+                        "IBM Z Xplore",
+                        "completed",
+                        null,
+                        null,
+                        null
                 );
 
         WebApplicationException exception =

@@ -1,5 +1,6 @@
 package com.barbarawilliams.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -15,13 +16,23 @@ public class ChallengeRepository {
             new CopyOnWriteArrayList<>(List.of(
                     new Challenge(
                             "JAVA1",
+                            "Java on z/OS",
                             "JAVA",
-                            "completed"
+                            "IBM Z Xplore",
+                            "completed",
+                            null,
+                            LocalDate.of(2026, 9, 11),
+                            "Complied and ran Java programs in USS."
                     ),
                     new Challenge(
                             "ASM2",
+                            "Assembler Part 2",
                             "ASSEMBLER",
-                            "completed"
+                            "IBM Z Xplore",
+                            "completed",
+                            null,
+                            LocalDate.of(2026, 9, 11),
+                            "Used TSO TEST and worked with assembler load modules."
                     )
             ));
 
