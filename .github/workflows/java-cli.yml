@@ -4,16 +4,16 @@ on:
   push:
     branches:
       - main
-    pull-request:
-      branches:
-        - main
+  pull-request:
+    branches:
+      - main
 
 permissions:
   contents: read
 
 jobs:
-  test:
-    name: Build and test
+  backend:
+    name: Test Java backend
     runs-on: ubuntu-latest
 
     steps:
@@ -32,3 +32,25 @@ jobs:
 
       - name: Run tests
         run: ./mvnw --batch-mode test
+
+  frontend:
+    name: Build TanStack frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@v1
+        with:
+          version: 11.7.0
+          runtime: node@24
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        working-directory: frontend
+        run: pnpm build
