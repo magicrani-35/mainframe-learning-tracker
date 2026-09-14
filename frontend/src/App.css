@@ -338,3 +338,37 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-bottom: 1px solid #203047;
+  background: rgb(8 17 31 / 88%);
+  backdrop-filter: blur(16px);
+}
+
+.site-nav a {
+  padding: 9px 14px;
+  border-radius: 9px;
+  color: #91a0b6;
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: #e8edf7;
+  background: #101c2e;
+}
+
+.site-nav a.active {
+  color: #08111f;
+  background: #73e6be;
+}
+
+.route-section {
+  margin-top: 0;
+ }
