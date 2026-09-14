@@ -7,6 +7,7 @@ import {
     useTable,
 } from '@tanstack/react-table';
 import type { ColumnDef } from '@tanstack/react-table';
+import { Link } from '@tanstack/react-router';
 
 import type { Challenge } from '../api/challenges'
 
@@ -38,6 +39,19 @@ const columns: Array<ColumnDef<typeof features, Challenge>> = [
     {
         accessorKey: 'title',
         header: 'Challenge',
+        cell: (info) => {
+            const challenge = info.row.original
+
+            return (
+                <Link
+                    to='/challenges/$code'
+                    params={{ code: challenge.code }}
+                    className={"challenge-link"}
+                >
+                    {challenge.title}
+                </Link>
+            )
+        },
     },
     {
         accessorKey: 'category',

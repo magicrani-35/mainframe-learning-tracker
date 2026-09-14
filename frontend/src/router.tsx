@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-router';
 
 import App from './App';
+import { ChallengeDetailPage } from './pages/ChallengeDetailPage';
 import { ChallengesPage } from "./pages/ChallengePage.tsx";
 import { DashboardPage } from "./pages/DashboardPage.tsx";
 
@@ -29,9 +30,16 @@ const challengesRoute = createRoute({
     component: ChallengesPage,
 })
 
+const challengeDetailRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/challenges/$code',
+    component: ChallengeDetailPage,
+})
+
 const routeTree = rootRoute.addChildren([
     dashboardRoute,
     challengesRoute,
+    challengeDetailRoute,
 ])
 
 export const router = createRouter({

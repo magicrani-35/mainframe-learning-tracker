@@ -21,3 +21,22 @@ Promise<Challenge[]> {
 
     return response.json();
 }
+
+export async function fetchChallenge(
+    code: string,
+): Promise<Challenge> {
+    const response = await fetch(
+        `/api/challenges/${encodeURIComponent(code)}`,
+    )
+
+    if (!response.ok) {
+        if (response.status === 404) {
+            throw new Error(`Challenge ${code} was not found`);
+        }
+        throw new Error(
+            `Unable to load challenge: ${response.status}`,
+        )
+    }
+
+    return response.json();
+}

@@ -269,7 +269,7 @@ h1 {
   display: grid;
   gap: 8px;
   color: #91a0b6;
-  font-size: 0.02rem;
+  font-size: 0.82rem;
 }
 
 .table-controls input,
@@ -280,6 +280,8 @@ h1 {
   border-radius: 10px;
   color: #e8edf7;
   background: #101c2e;
+  font-size: 1rem;
+  caret-color: #73e6be;
 }
 
 .table-wrapper {
@@ -372,3 +374,84 @@ h1 {
 .route-section {
   margin-top: 0;
  }
+
+.challenge-link {
+  color: #e8edf7;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.challenge-link:hover {
+  color: #73e6be;
+  text-decoration: underline;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 28px;
+  color: #73e6be;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.detail-card {
+  padding: clamp(24px, 5vw, 48px);
+  border: 1px solid #203047;
+  border-radius: 22px;
+  background: #101c2e;
+}
+
+.detail-card h1 {
+  max-width: 800px;
+  margin: 28px 0 40px;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 0;
+}
+
+ .detail-grid dt {
+   margin-bottom: 7px;
+   color: #718096;
+   font-size: 0.75rem;
+   text-transform: uppercase;
+ }
+
+ .detail-grid dd {
+   margin: 0;
+   color: #e8edf7;
+ }
+
+ .notes-panel {
+   margin-top: 40px;
+   padding-top: 30px;
+   border-top: 1px solid #203047;
+ }
+
+ .notes-panel h2 {
+   margin: 0 0 12px;
+ }
+
+ .notes-panel p {
+   color: #9ba9bd;
+   line-height: 1.7;
+ }
+
+ @media (max-width: 750px) {
+   .detail-grid {
+     grid-template-columns: repeat(2, 1fr);
+   }
+ }
+
+@media (max-width: 450px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
