@@ -8,6 +8,7 @@ import App from './App';
 import { ChallengeDetailPage } from './pages/ChallengeDetailPage';
 import { ChallengesPage } from "./pages/ChallengePage.tsx";
 import { DashboardPage } from "./pages/DashboardPage.tsx";
+import { NewChallengePage } from "./pages/NewChallengePage.tsx";
 
 const rootRoute = createRootRoute({
     component: App,
@@ -30,6 +31,12 @@ const challengesRoute = createRoute({
     component: ChallengesPage,
 })
 
+const newChallengeRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/challenges/new',
+    component: NewChallengePage,
+})
+
 const challengeDetailRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '/challenges/$code',
@@ -39,6 +46,7 @@ const challengeDetailRoute = createRoute({
 const routeTree = rootRoute.addChildren([
     dashboardRoute,
     challengesRoute,
+    newChallengeRoute,
     challengeDetailRoute,
 ])
 

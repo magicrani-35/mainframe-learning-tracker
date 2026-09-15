@@ -455,3 +455,103 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+.challenge-form-section {
+  max-width: 850px;
+}
+
+.challenge-form {
+  margin-top: 38px;
+  padding: 30px;
+  border: 1px solid #203047;
+  border-radius: 18px;
+  background: #101c2e;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.form-field {
+  display: grid;
+  gap: 9px;
+}
+
+.form-field > span {
+  color: #dce5f3;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #34465f;
+  border-radius: 10px;
+  outline: none;
+  color: #eef5ff;
+  background: #0b1524;
+  font: inherit;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: #718096;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: #73e6be;
+  box-shadow: 0 0 0 3px rgb(115 230 190 / 12%);
+}
+
+.field-error {
+  color: #ff9a9a;
+}
+
+@media (max-width: 650px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-grid-secondary,
+.notes-field {
+  margin-top: 22px;
+}
+
+.notes-field {
+  resize: vertical;
+}
+
+.form-error {
+  margin: 20px 0 0;
+  color: #ff9a9a;
+}
+
+.submit-button {
+  margin-top: 26px;
+  padding: 13px 20px;
+  border: 0;
+  border-radius: 10px;
+  color: #07130f;
+  background: #73e6be;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #91f0cf;
+}
+
+.submit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
