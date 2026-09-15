@@ -555,3 +555,48 @@ h1 {
   cursor: not-allowed;
   opacity: 0.55;
 }
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.form-actions .submit-button {
+  margin-top: 0;
+}
+
+.cancel-button {
+  padding: 12px 18px;
+  border: 1px solid #34465f;
+  border-radius: 10px;
+  color: #ccd6e6;
+  text-decoration: none;
+}
+
+.cancel-button:hover {
+  border-color: #718096;
+  background: #18263a;
+}
+
+.detail.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+}
+
+.edit-button {
+  display: inline-flex;
+  padding: 12px 18px;
+  border: 1px solid #73e6be;
+  border-radius: 10px;
+  color: #73e6be;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.edit-button:hover {
+  color: #07130f;
+  background: #73e6be;
+}

@@ -16,7 +16,6 @@ import com.barbarawilliams.model.Challenge;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 
@@ -161,6 +160,63 @@ class ChallengeResourceTest {
 
         assertEquals(
                 Response.Status.CONFLICT.getStatusCode(),
+                exception.getResponse().getStatus()
+        );
+    }
+
+    @Test
+    void updateExistingChallenge() {
+        Challenge update =
+                new Challenge(
+                        "ignored-code",
+                        "Updated Java Challenge",
+                        "JAVA",
+                        "IBM Z Xplore",
+                        "in progress",
+                        LocalDate.of(2026, 9, 15),
+                        null,
+                        "Reviewing Java and REST APIs"
+                );
+
+        Challenge result = resource.updateChallenge("java1", update);
+
+        assertEquals("JAVA1", result.code());
+        assertEquals("Updated Java Challenge", result.title());
+        assertEquals("in progress", result.status());
+        assertEquals(
+                "Reviewing Java and REST APIs",
+                result.notes()
+        );
+
+        Challenge storedChallenge = resource.getChallenge("JAVA1");
+
+        assertEquals(result, storedChallenge);
+    }
+
+    @Test
+    void updateMissingChallengeReturnsNotFound() {
+        Challenge update =
+                new Challenge(
+                        "MISSING",
+                        "Missing Challenge",
+                        "JAVA",
+                        "IBM Z Xplore",
+                        "planned",
+                        null,
+                        null,
+                        null
+                );
+
+        WebApplicationException exception =
+                assertThrows(
+                        WebApplicationException.class,
+                        () -> resource.updateChallenge("MISSING",
+                                update
+                        )
+                );
+
+        assertEquals(
+                Response.Status.NOT_FOUND.getStatusCode(),
                 exception.getResponse().getStatus()
         );
     }

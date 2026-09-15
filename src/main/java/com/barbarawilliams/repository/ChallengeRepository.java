@@ -55,4 +55,19 @@ public class ChallengeRepository {
     public void add(Challenge challenge) {
         challenges.add(challenge);
     }
+
+    public Optional<Challenge> update(
+            String code,
+            Challenge updatedChallenge) {
+        for (int index = 0; index < challenges.size(); index++) {
+            Challenge existingChallenge = challenges.get(index);
+
+            if (existingChallenge.code().equalsIgnoreCase(code)) {
+                challenges.set(index,  updatedChallenge);
+                return Optional.of(updatedChallenge);
+            }
+        }
+
+        return Optional.empty();
+    }
 }

@@ -62,7 +62,7 @@ export function ChallengeDetailPage() {
                     <span
                         className={`status status-${challenge.status
                             .toLowerCase()
-                            .replaceAll(' ', '_')}`}
+                            .replaceAll(' ', '-')}`}
                     >
                         {challenge.status}
                     </span>
@@ -98,6 +98,16 @@ export function ChallengeDetailPage() {
                         {challenge.notes || 'No notes recorded yet.'}
                     </p>
                 </section>
+
+                <div className={"detail-actions"}>
+                    <Link
+                        to="/challenges/$code/edit"
+                        params={{ code: challenge.code }}
+                        className={"edit-button"}
+                    >
+                        Edit challenge
+                    </Link>
+                </div>
             </article>
         </main>
     )

@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -86,5 +87,37 @@ public class ChallengeResource {
         return Response.created(challengeUri)
                 .entity(challenge)
                 .build();
+    }
+
+    @PUT
+    @Path("/{code}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Challenge updateChallenge(
+            @PathParam("code") String code,
+            Challenge challenge) {
+
+        if (challenge == null) {
+            throw new WebApplicationException(
+                    "Challenge data is required",
+                    Response.Status.BAD_REQUEST
+            );
+        }
+
+        Challenge updatedChallenge = new Challenge(
+                code.toUpperCase(),
+                challenge.title(),
+                challenge.category(),
+                challenge.course(),
+                challenge.status(),
+                challenge.startedOn(),
+                challenge.completedOn(),
+                challenge.notes()
+        );
+
+        return repository.update(code, updatedChallenge)
+                .orElseThrow(() -> new WebApplicationException(
+                        "Challenge not found: " + code,
+                        Response.Status.NOT_FOUND
+                ));
     }
 }

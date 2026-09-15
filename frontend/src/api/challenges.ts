@@ -4,8 +4,8 @@ export type Challenge = {
     category: string;
     course: string;
     status: string;
-    startedOn: string;
-    completedOn: string;
+    startedOn: string | null;
+    completedOn: string | null;
     notes: string | null;
 }
 
@@ -19,6 +19,8 @@ export type NewChallenge = {
     completedOn: string | null;
     notes: string | null;
 }
+
+export type ChallengeUpdate = Omit<Challenge, 'code'>
 
 export async function fetchChallenges():
 Promise<Challenge[]> {
@@ -68,6 +70,31 @@ export async function createChallenge(
 
         throw new Error(
             message || `Unable to create challenge: ${response.status}`,
+        )
+    }
+
+    return response.json();
+}
+
+export async function updateChallenge(
+    code: string,
+    challenge: ChallengeUpdate,
+): Promise<Challenge> {
+    const response = await fetch(`/api/challenges/${encodeURIComponent(code)}`,
+        {
+             method: 'PUT',
+            headers: {
+                 'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(challenge),
+        },
+    )
+
+    if (!response.ok) {
+        const message = await response.text();
+
+        throw new Error(
+            message || `Unable to update challenge: ${response.status}`,
         )
     }
 
