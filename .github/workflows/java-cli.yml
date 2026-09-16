@@ -102,7 +102,7 @@ jobs:
             psql \
               -U "$POSTGRES_USER" \
               -d "$POSTGRES_DB" \
-            < database/init/oo1-create-challenges.sql
+            < database/init/001-create-challenges.sql
 
       - name: Start Open Liberty
         run: |
