@@ -65,13 +65,13 @@ jobs:
       POSTGRES_USER: tracker_ci
       POSTGRES_PASSWORD: ci_test_password
       DB_HOST: localhost
-      DB_PORT: "5432"
+      DB_PORT: "5433"
 
     services:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: learning-tracker
+          POSTGRES_DB: learning_tracker
           POSTGRES_USER: tracker_ci
           POSTGRES_PASSWORD: ci_test_password
         ports:
