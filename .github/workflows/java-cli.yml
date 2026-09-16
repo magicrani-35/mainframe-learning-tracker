@@ -111,7 +111,7 @@ jobs:
 
       - name: Wait for API
         run: |
-          for attempt in {1..30}; do
+          for attempt in {1..120}; do
             if curl --fail --silent \
               http://localhost:9080/mainframe-learning-tracker/api/challenges \
               > challenges.json; then 
