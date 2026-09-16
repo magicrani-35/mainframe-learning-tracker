@@ -54,3 +54,93 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: pnpm build
+
+
+  integration:
+    name: Test PostgreSQL integration
+    runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_DB: learning_tracker
+      POSTGRES_USER: tracker_ci
+      POSTGRES_PASSWORD: ci_test_password
+      DB_HOST: localhost
+      DB_PORT: "5432"
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: learning-tracker
+          POSTGRES_USER: tracker_ci
+          POSTGRES_PASSWORD: ci_test_password
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U tracker_ci -d learning_tracker"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+          
+        steps:
+          - name: Check out repository
+            uses: actions/checkout@v7
+
+          - name: Set up Java 21
+            uses: actions/setup-java@v6
+            with:
+              distribution: temurin
+              java-version: "21"
+              cache: maven
+
+          - name: Make maven wrapper executable
+            run: chmod +x mvnw
+
+          - name: Initialize database
+            run: |
+              docker exec -i "${{ job.services.postgres.id }}" \
+                psql \
+                  -U "$POSTGRES_USER" \
+                  -d "$POSTGRES_DB" \
+              < database/init/oo1-create-challenges.sql
+
+          - name: Start Open Liberty
+            run: |
+              nohup ./mvnw --batch-mode liberty:dev \
+                > liberty-ci.log 2>&1 &
+
+          - name: Wait for API
+            run: |
+              for attempt in {1..30}; do
+                if curl --fail --silent \
+                  http://localhost:9080/mainframe-learning-tracker/api/challenges \
+                    > challenges.json; then 
+                  exit 0
+                fi
+            
+                sleep 2
+              done
+            
+              cat liberty-ci.log
+              exit 1
+        
+
+          - name: Verify database records
+            run: |
+              python3 - <<'PY'
+              import json
+            
+            with open("challenges.json", encoding="utf-8") as response:
+                challenges = json.load(response)
+            
+              codes = {challenge["code"] for challenge in challenges}
+            
+              assert "JAVA1" in codes, f"JAVA1 missing from {codes}"
+              assert "ASM2" in codes, f"ASM2 missing from {codes}"
+            
+              print("PostgreSQL integration verified:", sorted(codes))
+              PY
+
+          - name: Show Liberty log after failure
+            if: failure()
+            run: cat liberty-ci.log
