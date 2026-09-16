@@ -3,11 +3,16 @@ package com.barbarawilliams.rest;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import com.barbarawilliams.repository.ChallengeRepository;
 import org.junit.jupiter.api.Test;
@@ -22,11 +27,51 @@ import jakarta.ws.rs.core.UriInfo;
 class ChallengeResourceTest {
 
     private ChallengeResource resource;
+    private ChallengeRepository repository;
+    private Challenge javaChallenge;
+    private Challenge asmChallenge;
 
     @BeforeEach
     void setUp() {
-        ChallengeRepository repository =
-                new ChallengeRepository();
+        repository = mock(ChallengeRepository.class);
+
+        javaChallenge =
+                new Challenge(
+                        "JAVA1",
+                        "Java on z/OS",
+                        "JAVA",
+                        "IBM Z Xplore",
+                        "completed",
+                        null,
+                        LocalDate.of(2026, 9, 11),
+                        "Compiled and ran Java programs in USS."
+                );
+        asmChallenge =
+                new Challenge(
+                        "ASM2",
+                        "Assembler Part 2",
+                        "ASSEMBLER",
+                        "IBM Z Xplore",
+                        "completed",
+                        null,
+                        LocalDate.of(2026, 9, 11),
+                        "Used TSO TEST and worked with assembler."
+                );
+
+        when(repository.findAll())
+                .thenReturn(List.of(javaChallenge, asmChallenge));
+
+        when(repository.findByCode("JAVA1"))
+                .thenReturn(Optional.of(javaChallenge));
+
+        when(repository.findByCode("asm2"))
+                .thenReturn(Optional.of(asmChallenge));
+
+        when(repository.findByCode("DOES-NOT-EXIST"))
+                .thenReturn(Optional.empty());
+
+        when(repository.codeExists("java1"))
+                .thenReturn(true);
 
         resource = new ChallengeResource(repository);
     }
@@ -91,6 +136,8 @@ class ChallengeResourceTest {
 
         Response response =
                 resource.createChallenge(challenge, uriInfo);
+        verify(repository).add(challenge);
+
         assertEquals(
                 Response.Status.CREATED.getStatusCode(),
                 response.getStatus()
@@ -166,7 +213,7 @@ class ChallengeResourceTest {
 
     @Test
     void updateExistingChallenge() {
-        Challenge update =
+        Challenge request =
                 new Challenge(
                         "ignored-code",
                         "Updated Java Challenge",
@@ -178,7 +225,22 @@ class ChallengeResourceTest {
                         "Reviewing Java and REST APIs"
                 );
 
-        Challenge result = resource.updateChallenge("java1", update);
+        Challenge expected =
+                new Challenge(
+                        "JAVA1",
+                        request.title(),
+                        request.category(),
+                        request.course(),
+                        request.status(),
+                        request.startedOn(),
+                        request.completedOn(),
+                        request.notes()
+                );
+        when(repository.update("java1", expected))
+                .thenReturn(Optional.of(expected));
+
+        Challenge result =
+                resource.updateChallenge("java1", request);
 
         assertEquals("JAVA1", result.code());
         assertEquals("Updated Java Challenge", result.title());
@@ -188,9 +250,7 @@ class ChallengeResourceTest {
                 result.notes()
         );
 
-        Challenge storedChallenge = resource.getChallenge("JAVA1");
-
-        assertEquals(result, storedChallenge);
+        verify(repository).update("java1", expected);
     }
 
     @Test
@@ -206,6 +266,11 @@ class ChallengeResourceTest {
                         null,
                         null
                 );
+
+        when(repository.update(
+                eq("MISSING"),
+                any(Challenge.class)
+        )).thenReturn(Optional.empty());
 
         WebApplicationException exception =
                 assertThrows(

@@ -39,4 +39,26 @@
 
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
     <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+
+    <library id="PostgreSQLLib">
+        <fileset
+            dir="${shared.resource.dir}/postgresql"
+            includes="postgresql-*.jar" />
+    </library>
+
+    <!-- Database connection used by Jakarta Persistence -->
+    <dataSource
+        id="DefaultDataSource"
+        jndiName="jdbc/learningTracker"
+    >
+        <jdbcDriver libraryRef="PostgreSQLLib" />
+
+        <properties.postgresql
+            databaseName="${env.POSTGRES_DB}"
+            serverName="${env.DB_HOST}"
+            portNumber="${env.DB_PORT}"
+            user="${env.POSTGRES_USER}"
+            password="${env.POSTGRES_PASSWORD}"
+        />
+    </dataSource>
 </server>

@@ -1,73 +1,84 @@
 package com.barbarawilliams.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.barbarawilliams.model.Challenge;
+import com.barbarawilliams.persistence.ChallengeEntity;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class ChallengeRepository {
 
-    private final List<Challenge> challenges =
-            new CopyOnWriteArrayList<>(List.of(
-                    new Challenge(
-                            "JAVA1",
-                            "Java on z/OS",
-                            "JAVA",
-                            "IBM Z Xplore",
-                            "completed",
-                            null,
-                            LocalDate.of(2026, 9, 11),
-                            "Complied and ran Java programs in USS."
-                    ),
-                    new Challenge(
-                            "ASM2",
-                            "Assembler Part 2",
-                            "ASSEMBLER",
-                            "IBM Z Xplore",
-                            "completed",
-                            null,
-                            LocalDate.of(2026, 9, 11),
-                            "Used TSO TEST and worked with assembler load modules."
-                    )
-            ));
+    @PersistenceContext(unitName = "learningTracker")
+    EntityManager entityManager;
 
     public List<Challenge> findAll() {
-        return List.copyOf(challenges);
+        return entityManager
+                .createQuery(
+                        """
+                SELECT challenge
+                FROM ChallengeEntity challenge
+                ORDER BY challenge.code
+                """,
+                        ChallengeEntity.class
+                )
+                .getResultStream()
+                .map(ChallengeEntity::toModel)
+                .toList();
     }
 
     public Optional<Challenge> findByCode(String code) {
-        return challenges.stream()
-                .filter(challenge ->
-
-                        challenge.code().equalsIgnoreCase(code))
-                            .findFirst();
+        return findEntityByCode(code)
+                .map(ChallengeEntity::toModel);
     }
 
     public boolean codeExists(String code) {
-        return findByCode(code).isPresent();
+        return findEntityByCode(code).isPresent();
     }
 
+    @Transactional
     public void add(Challenge challenge) {
-        challenges.add(challenge);
+        entityManager.persist(
+                new ChallengeEntity(challenge)
+        );
     }
 
+    @Transactional
     public Optional<Challenge> update(
             String code,
             Challenge updatedChallenge) {
-        for (int index = 0; index < challenges.size(); index++) {
-            Challenge existingChallenge = challenges.get(index);
 
-            if (existingChallenge.code().equalsIgnoreCase(code)) {
-                challenges.set(index,  updatedChallenge);
-                return Optional.of(updatedChallenge);
-            }
+        Optional<ChallengeEntity> existing =
+                findEntityByCode(code);
+
+        if (existing.isEmpty()) {
+            return Optional.empty();
         }
 
-        return Optional.empty();
+        ChallengeEntity entity = existing.get();
+        entity.updateFrom(updatedChallenge);
+
+        return Optional.of(entity.toModel());
+    }
+
+    private Optional<ChallengeEntity> findEntityByCode(String code) {
+        return entityManager
+                .createQuery(
+                        """
+                                SELECT challenge
+                                FROM ChallengeEntity challenge
+                                WHERE UPPER(challenge.code) =
+                                UPPER(:code)
+                                """,
+                        ChallengeEntity.class
+                )
+                .setParameter("code", code)
+                .getResultStream()
+                .findFirst();
     }
 }

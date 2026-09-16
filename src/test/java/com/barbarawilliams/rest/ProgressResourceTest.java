@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.barbarawilliams.model.Challenge;
 import com.barbarawilliams.model.ProgressSummary;
 import com.barbarawilliams.repository.ChallengeRepository;
@@ -13,40 +18,17 @@ class ProgressResourceTest {
     @Test
     void calculateProgressSummary() {
         ChallengeRepository repository =
-                new ChallengeRepository();
+                mock(ChallengeRepository.class);
 
-        repository.add(new Challenge(
-                "CURRENT",
-                "Current project",
-                "JAVA",
-                "Independent project",
-                "in progress",
-                null,
-                null,
-                null
-        ));
-
-        repository.add(new Challenge(
-                "PLANNED",
-                "Future challenge",
-                "COBOL",
-                "Independent project",
-                "planned",
-                null,
-                null,
-                null
-        ));
-
-        repository.add(new Challenge(
-                "BLOCKED",
-                "Blocked challenge",
-                "JCL",
-                "Independent project",
-                "blocked",
-                null,
-                null,
-                null
-        ));
+        when(repository.findAll()).thenReturn(
+                List.of(
+                        challenge("JAVA1", "completed"),
+                        challenge("ASM2", "completed"),
+                        challenge("CURRENT", "in progress"),
+                        challenge("PLANNED", "planned"),
+                        challenge("BLOCKED", "blocked")
+                )
+        );
 
         ProgressResource resource =
                 new ProgressResource(repository);
@@ -59,6 +41,24 @@ class ProgressResourceTest {
         assertEquals(1, summary.inProgress());
         assertEquals(1, summary.planned());
         assertEquals(1, summary.blocked());
-        assertEquals(40.0, summary.completionPercentage());
+        assertEquals(
+                40.0,
+                summary.completionPercentage()
+        );
+    }
+
+    private Challenge challenge(
+            String code,
+            String status) {
+        return new Challenge(
+                code,
+                code + " challenge",
+                "TEST",
+                "Test course",
+                status,
+                null,
+                null,
+                null
+        );
     }
 }
