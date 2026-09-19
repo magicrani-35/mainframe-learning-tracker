@@ -4,13 +4,37 @@ import json
 import sys
 from pathlib import Path
 
-input_path  = Path(
-    sys.argv[1] if len(sys.argv) > 1 else "zowe-job-history.json"
+raw_directory = Path("evidence/zowe/raw")
+safe_directory = Path("evidence/zowe/safe")
+
+if len(sys.argv) > 1:
+    input_path = Path(sys.argv[1])
+else:
+    snapshots = list(raw_directory.glob("jobs-*.json"))
+    
+    if not snapshots:
+        raise SystemExit(
+            "No raw Zowe snapshots found. Run export-job-history.sh first."
+        )
+        
+    input_path = max(
+        snapshots,
+        key=lambda snapshot: snapshot.stat().st_mtime,
+    )
+        
+timestamped_name = input_path.name.replace(
+    "jobs-",
+    "evidence-",
+    1,
 )
 
-output_path = Path(
-    sys.argv[2] if len(sys.argv) > 2 else "zowe-job-evidence.json"
+output_path = (
+    Path(sys.argv[2])
+    if len(sys.argv) > 2
+    else safe_directory / timestamped_name
 )
+
+safe_directory.mkdir(parents=True, exist_ok=True)
 
 with input_path.open(encoding="utf-8") as input_file:
     response = json.load(input_file)

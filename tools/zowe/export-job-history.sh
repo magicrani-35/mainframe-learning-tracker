@@ -2,8 +2,12 @@
 
 set -euo pipefail
 
-OUTPUT_FILE="${1:-zowe-job-history.json}"
 OWNER="${ZOWE_USERNAME:?Set ZOWE_USERNAME before running this script}"
+TIMESTAMP="$(date -u +"%Y-%m-%dT%H-%M-%SZ")"
+
+OUTPUT_FILE="${1:-evidence/zowe/raw/jobs-${TIMESTAMP}.json}"
+
+mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 echo "Retrieving recent jobs for $OWNER..."
 

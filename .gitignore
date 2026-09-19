@@ -13,5 +13,12 @@ buildNumber.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 .env
+
+# Local IDE Settings
+.vscode/
+
+# Generated ZOWE evidence snapshots
+evidence/zowe/raw/*.json
+evidence/zowe/safe/*.json
 zowe-job-history.json
 zowe-job-evidence.json
