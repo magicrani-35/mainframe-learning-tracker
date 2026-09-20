@@ -98,11 +98,16 @@ jobs:
 
       - name: Initialize database
         run: |
+          for migration in database/init/*.sql; do
+            echo "Applying $migration"
+          
           docker exec -i "${{ job.services.postgres.id }}" \
             psql \
+              -v ON_ERROR_STOP=1 \
               -U "$POSTGRES_USER" \
               -d "$POSTGRES_DB" \
-            < database/init/001-create-challenges.sql
+            < "$migration"
+          done
 
       - name: Start Open Liberty
         run: |
