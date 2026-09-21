@@ -18,6 +18,9 @@
         <class>
             com.barbarawilliams.persistence.ChallengeEntity
         </class>
+        <class>
+            com.barbarawilliams.persistence.EvidenceEntity
+        </class>
 
         <properties>
             <property
