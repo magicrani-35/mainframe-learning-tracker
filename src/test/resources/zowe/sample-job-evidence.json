@@ -1,0 +1,8 @@
+[
+    {
+        "jobName": "TESTJOB",
+        "jobId": "JOB12345",
+        "status": "OUTPUT",
+        "returnCode": "CC 0000"
+    }
+]
