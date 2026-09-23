@@ -49,6 +49,7 @@ public class EvidenceRepository {
 
         EvidenceEntity entity = new EvidenceEntity(evidence);
         entityManager.persist(entity);
+        entityManager.flush();
 
         return entity.toModel();
     }

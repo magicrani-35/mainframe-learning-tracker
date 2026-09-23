@@ -23,6 +23,13 @@ function App() {
           >
             Challenges
           </Link>
+
+          <Link
+              to="/evidence"
+              activeProps={{ className: 'active' }}
+            >
+              Evidence
+            </Link>
         </nav>
 
         <Outlet />

@@ -6,6 +6,7 @@ import {
 
 import App from './App';
 import { ChallengeDetailPage } from './pages/ChallengeDetailPage';
+import { EvidencePage } from './pages/evidencePage.tsx';
 import { ChallengesPage } from "./pages/ChallengePage.tsx";
 import { DashboardPage } from "./pages/DashboardPage.tsx";
 import { NewChallengePage } from "./pages/NewChallengePage.tsx";
@@ -50,12 +51,19 @@ const editChallengeRoute = createRoute({
     component: EditChallengePage,
 })
 
+const evidenceRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/evidence',
+    component: EvidencePage,
+})
+
 const routeTree = rootRoute.addChildren([
     dashboardRoute,
     challengesRoute,
     newChallengeRoute,
     challengeDetailRoute,
     editChallengeRoute,
+    evidenceRoute,
 ])
 
 export const router = createRouter({
